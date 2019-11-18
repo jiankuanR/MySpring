@@ -82,12 +82,12 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
 	// Modifiable attributes
 
-	/**
+	/** 设置父bd
 	 * Set the name of the parent definition of this bean definition, if any.
 	 */
 	void setParentName(@Nullable String parentName);
 
-	/**
+	/** 获取父bd
 	 * Return the name of the parent definition of this bean definition, if any.
 	 */
 	@Nullable
@@ -157,7 +157,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	@Nullable
 	String[] getDependsOn();
 
-	/** 设置是否作为自动装载参考对象 意思是是否作为注入对象
+	/** 设置是否作为自动装载候选对象 意思是是否作为注入对象
 	 * Set whether this bean is a candidate for getting autowired into some other bean.
 	 * <p>Note that this flag is designed to only affect type-based autowiring.
 	 * It does not affect explicit references by name, which will get resolved even
@@ -213,13 +213,16 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	String getFactoryMethodName();
 
 	/**
+	 * ConstructorArgumentValues对象里面维护了一个Map<Integer,ValueHolder>和一个List<ValueHolder>
+	 *     Map用于存储带有索引的构造方法参数
+	 *     List用于存储没有索引的构造方法参数
 	 * Return the constructor argument values for this bean.
 	 * <p>The returned instance can be modified during bean factory post-processing.
 	 * @return the ConstructorArgumentValues object (never {@code null})
 	 */
 	ConstructorArgumentValues getConstructorArgumentValues();
 
-	/**
+	/** 判断构造方法有没有传值
 	 * Return if there are constructor argument values defined for this bean.
 	 * @since 5.0.2
 	 */
@@ -320,6 +323,7 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	boolean isPrototype();
 
 	/**
+	 * 为什么可以是抽象的
 	 * Return whether this bean is "abstract", that is, not meant to be instantiated.
 	 */
 	boolean isAbstract();
