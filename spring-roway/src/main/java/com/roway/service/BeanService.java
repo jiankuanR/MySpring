@@ -1,4 +1,9 @@
-package org.springframework.roway.service;
+package com.roway.service;
+
+import com.roway.appconfig.MyScan;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
 
 /**
  * ==================================================
@@ -10,5 +15,11 @@ package org.springframework.roway.service;
  * <description>：
  * ==================================================
  */
+@MyScan
 public class BeanService {
+
+	public void close() {
+		System.out.println("close close");
+	}
+
 }

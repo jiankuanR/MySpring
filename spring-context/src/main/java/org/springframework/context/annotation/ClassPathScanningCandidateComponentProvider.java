@@ -187,6 +187,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	public void resetFilters(boolean useDefaultFilters) {
 		this.includeFilters.clear();
 		this.excludeFilters.clear();
+		// 默认为采用默认的TypeFilter 可以手动指定注解类
 		if (useDefaultFilters) {
 			registerDefaultFilters();
 		}
@@ -525,7 +526,8 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 */
 	protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
 		AnnotationMetadata metadata = beanDefinition.getMetadata();
-		return (metadata.isIndependent() && (metadata.isConcrete() ||
+		return (metadata.isIndependent() &&
+				(metadata.isConcrete() ||
 				(metadata.isAbstract() && metadata.hasAnnotatedMethods(Lookup.class.getName()))));
 	}
 

@@ -1,4 +1,6 @@
-package org.springframework.roway.service;
+package com.roway.service;
+
+import org.springframework.stereotype.Component;
 
 /**
  * ==================================================
@@ -10,6 +12,7 @@ package org.springframework.roway.service;
  * <description>：
  * ==================================================
  */
+@Component
 public class IndexService {
 
 	public void sayHello() {
