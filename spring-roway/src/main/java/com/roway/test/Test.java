@@ -22,8 +22,6 @@ public class Test {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(AppConfig.class);
 		ac.refresh();
-		CustomerScanner customerScanner = new CustomerScanner(ac);
-		customerScanner.addIncludeFilter(null);
-		System.out.println(customerScanner.scan("com.roway"));
+
 	}
 }
