@@ -174,21 +174,28 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
-		/**
-		 * 首先spring会去第一个map当中去获取一个bean；说白了就是从容器中获取
-		 * 说明我们如果在容器初始化后调用getBean其实就从map中去获取一个bean
-		 * 假设是初始化A的时候那么这个时候肯定等于空，前文分析过这个map的意义
+		/*
+		  首先spring会去第一个map当中去获取一个bean；说白了就是从容器中获取
+		  说明我们如果在容器初始化后调用getBean其实就从map中去获取一个bean
+		  假设是初始化A的时候那么这个时候肯定等于空，前文分析过这个map的意义
 		 */
 		Object singletonObject = this.singletonObjects.get(beanName);
+
+		//第一次进一定为空 所以关键在第二个条件 这个单例对象是否正在被创建 通过一个Set存方法名称来判断
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 这个earlySingletonObjects对象可以理解为三级缓存每当生成好的对象会存放在三级缓存中 ，一边后面再次有人注
+				// 入这个类则可以直接在三级缓存中取
 				singletonObject = this.earlySingletonObjects.get(beanName);
+				// allowEarlyReference 是上层直接写死为 true 则寓意支持循环依赖，这也是第二个证明Spring默认支持循环以来的地方
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
 						// 在这里会进行对() -> getEarlyBeanReference(beanName, mbd, bean)的调用
 						singletonObject = singletonFactory.getObject();
+						// 通过工厂生产出来的代理后的对象存放到三级缓存中
 						this.earlySingletonObjects.put(beanName, singletonObject);
+						// 然后二级缓存中的数据就没有意义了 就可以删除了
 						this.singletonFactories.remove(beanName);
 					}
 				}
