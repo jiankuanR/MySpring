@@ -174,6 +174,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		/**
+		 * 首先spring会去第一个map当中去获取一个bean；说白了就是从容器中获取
+		 * 说明我们如果在容器初始化后调用getBean其实就从map中去获取一个bean
+		 * 假设是初始化A的时候那么这个时候肯定等于空，前文分析过这个map的意义
+		 */
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
@@ -181,6 +186,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						// 在这里会进行对() -> getEarlyBeanReference(beanName, mbd, bean)的调用
 						singletonObject = singletonFactory.getObject();
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
