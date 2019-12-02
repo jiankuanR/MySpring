@@ -1,9 +1,8 @@
 package com.roway.test;
 
 import com.roway.appconfig.AppConfig;
-import com.roway.beandefinition.CustomerScanner;
+import com.sun.istack.internal.NotNull;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.type.filter.TypeFilter;
 
 /**
  * ==================================================
@@ -17,8 +16,16 @@ import org.springframework.core.type.filter.TypeFilter;
  */
 public class Test {
 
+	public void sout( @NotNull  Integer ss) {
+		System.out.println(ss);
+	}
+
 	public static void main(String[] args) {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+		Test test = new Test();
+		Integer ss = null;
+		test.sout(ss);
 	}
 }
