@@ -16,16 +16,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class Test {
 
-	public void sout( @NotNull  Integer ss) {
-		System.out.println(ss);
-	}
-
 	public static void main(String[] args) {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
 
-		Test test = new Test();
-		Integer ss = null;
-		test.sout(ss);
 	}
 }
