@@ -388,6 +388,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		 * 上文已经解释过了，创建对象的时候调用就会等于空
 		 */
 		if (sharedInstance != null && args == null) {
+			// 如果get到了直接返回 第一次没有
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
@@ -406,7 +407,6 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			 * 判断这个类是不是在创建过程中
 			 * 上文说了，一个类是否在创建的过程中是第二次调用getSingleton中决定的
 			 * 这里还没有执行到，如果就在创建过程中则出异常
-
 			 **/
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.

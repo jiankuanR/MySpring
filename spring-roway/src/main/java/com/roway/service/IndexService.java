@@ -15,7 +15,5 @@ import org.springframework.stereotype.Component;
 @Component
 public class IndexService {
 
-	public void sayHello() {
-		System.out.println("Hello World!");
-	}
+	private BeanService beanService;
 }

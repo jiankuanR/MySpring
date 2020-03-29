@@ -15,11 +15,10 @@ import javax.annotation.PreDestroy;
  * <description>：
  * ==================================================
  */
-@MyScan
+//@MyScan
+	@Component
 public class BeanService {
 
-	public void close() {
-		System.out.println("close close");
-	}
+	private IndexService indexService;
 
 }

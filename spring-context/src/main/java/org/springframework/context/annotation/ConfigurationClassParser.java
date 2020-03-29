@@ -288,6 +288,7 @@ class ConfigurationClassParser {
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
 				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
 					BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
+					// 把扫描后的变成BeanDefinition
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
 					}
