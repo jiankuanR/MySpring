@@ -16,20 +16,14 @@ import org.springframework.context.annotation.ImportResource;
  * <description>：
  * ==================================================
  */
-@ComponentScan("com.roway")
+//@ComponentScan("com.roway")
 @Configuration
-//@MapperScan
+@MapperScan
+@ImportResource("classpath:spring.xml")
 public class AppConfig {
 
 	@Bean
 	public E e() {
 		return new E();
 	}
-
-	@Bean
-	public F f() {
-		e();
-		return new F();
-	}
-
 }

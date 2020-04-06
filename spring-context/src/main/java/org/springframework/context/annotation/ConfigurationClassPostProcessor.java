@@ -251,6 +251,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		enhanceConfigurationClasses(beanFactory);
+		// 向spring容器中加入一个BeanPostProcessor
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
 

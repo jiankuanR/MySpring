@@ -240,7 +240,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 
 		//可以简单的认为就是对beanName做一个校验特殊字符串的功能
-		//里面包含了FactoryBean和
+		//里面包含了FactoryBean和&的判断
 		final String beanName = transformedBeanName(name);
 
 		// 定义一个对象用来接收后面返回的bean
