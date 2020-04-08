@@ -87,9 +87,12 @@ abstract class ConfigurationClassUtils {
 		}
 
 		AnnotationMetadata metadata;
+		// 因为配置类是通过reader.register注册进来的，所以得它的BeanDefinition类型为AnnotatedGenericBeanDefinition，、
+		// 这个类为AnnotatedBeanDefinition的子类，所以只有配置类能进这个判断
 		if (beanDef instanceof AnnotatedBeanDefinition &&
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...
+			// 获取到配置类的元数据信息
 			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata();
 		}
 		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) {
@@ -112,6 +115,8 @@ abstract class ConfigurationClassUtils {
 			}
 		}
 
+		// 判断是否包含@Configure注解如果存在，如果存在则在BeanDefinition的元数据（设置那些不存在api的数据，一个map）中put一条 类名+configureClass : full ，否则设置 类名+configureClass : lite
+		// 这里即代表已经解析过了
 		if (isFullConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}

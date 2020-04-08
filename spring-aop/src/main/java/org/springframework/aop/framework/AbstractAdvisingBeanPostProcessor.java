@@ -27,7 +27,7 @@ import org.springframework.lang.Nullable;
 /**
  * Base class for {@link BeanPostProcessor} implementations that apply a
  * Spring AOP {@link Advisor} to specific beans.
- *
+ *	Aop 处理器
  * @author Juergen Hoeller
  * @since 3.2
  */

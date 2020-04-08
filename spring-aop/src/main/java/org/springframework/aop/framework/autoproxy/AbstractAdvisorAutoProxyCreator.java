@@ -41,7 +41,7 @@ import org.springframework.util.Assert;
  * Advisors by Ordered order value. Advisors that don't implement the
  * Ordered interface will be considered as unordered; they will appear
  * at the end of the advisor chain in undefined order.
- *
+ *	AbstractAutoProxyCreator
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @see #findCandidateAdvisors
