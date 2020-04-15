@@ -31,6 +31,7 @@ import org.springframework.lang.Nullable;
 public interface AutowireCandidateResolver {
 
 	/**
+	 * 判断给定的bean定义是否允许被依赖注入（bean定义的默认值都是true）
 	 * Determine whether the given bean definition qualifies as an
 	 * autowire candidate for the given dependency.
 	 * <p>The default implementation checks

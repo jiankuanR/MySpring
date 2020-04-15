@@ -18,8 +18,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 //@ComponentScan("com.roway")
 @Configuration
-@MapperScan
-@ImportResource("classpath:spring.xml")
+//@ImportResource("classpath:spring.xml")
 public class AppConfig {
 
 	@Bean

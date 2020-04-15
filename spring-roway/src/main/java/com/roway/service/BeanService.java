@@ -1,6 +1,7 @@
 package com.roway.service;
 
 import com.roway.appconfig.MyScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -16,9 +17,10 @@ import javax.annotation.PreDestroy;
  * ==================================================
  */
 //@MyScan
-	@Component
+@Component
 public class BeanService {
 
+	@Autowired
 	private IndexService indexService;
 
 }
