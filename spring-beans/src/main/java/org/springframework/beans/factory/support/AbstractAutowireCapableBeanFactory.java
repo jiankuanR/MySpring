@@ -1181,9 +1181,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #instantiateBean
 	 */
 	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
+		// 将Bean明解析为Class引用
 		// Make sure bean class is actually resolved at this point.
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
 
+		// 检测类的访问权限   一般情况下 可以访问非空权限的Bean  可以配置
 		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
 			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
@@ -1194,10 +1196,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
 
+		//  <bean id="dynamicStu" factory-bean="stuFactory" factory-method="getDynamicStu">
+		// 如果工厂方法不为空 则通过工厂方式来构建Bean
 		if (mbd.getFactoryMethodName() != null) {
+			// 使用 FactoryBean 的 factory-method 来创建，支持静态工厂和实例工厂
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
 		}
 
+		// 当多次构建同一个bean的时候，可以使用此处的快照，无需再判断使用哪个构造来构建
 		// Shortcut when re-creating the same bean...
 		boolean resolved = false;
 		boolean autowireNecessary = false;
@@ -1209,20 +1215,32 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
+		// 已经解析好了，直接注入即可
 		if (resolved) {
 			if (autowireNecessary) {
+				//  autowire 自动注入，调用构造函数自动注入
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
+				// 通过“默认构造方法”的方式构造 bean 对象
 				return instantiateBean(beanName, mbd);
 			}
 		}
 
-		// 推断构造方法
+		// 推断构造方法  主要是检查已经注册的 SmartInstantiationAwareBeanPostProcessor
 		// Candidate constructors for autowiring?
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+
+		/**
+		 * 确定构造方法会在什么情况下进入呢
+		 * 1.前面推断出构造方法不为空
+		 * 2.Bean工厂的注入模型为3 使用构造方法注入
+		 * 3.xml中<Bean></Bean> 配置了<construct-arg/>标签
+		 * 4.args 是由用户调用getBean(String name, Object... args) 传入的
+		 */
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
+			// 通过“构造方法自动注入”的方式构造 bean 对象
 			return autowireConstructor(beanName, mbd, ctors, args);
 		}
 
@@ -1233,7 +1251,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// No special handling: simply use no-arg constructor.
-		// 实例化一个真实普通对象
+		// 实例化一个真实普通对象(调用无参构造方法)
 		return instantiateBean(beanName, mbd);
 	}
 

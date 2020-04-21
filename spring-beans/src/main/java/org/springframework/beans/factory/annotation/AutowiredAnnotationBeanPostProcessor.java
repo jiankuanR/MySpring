@@ -269,13 +269,18 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			this.lookupMethodsChecked.add(beanName);
 		}
 
+		// 这个一般只有在@Bean方法中未加@Configure的时候，为了减少二次创建的性能消耗
 		// Quick check on the concurrent map first, with minimal locking.
 		Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
+		// 一般都走这里
 		if (candidateConstructors == null) {
-			// Fully synchronized resolution now...
+			// 解决多线程并发创建的问题
+			// Fully synchronized resolution now ...
 			synchronized (this.candidateConstructorsCache) {
+				// 如果第一个存在值，如果碰到多线程就会进入到这里，加一个同步可以线程安全，在二层也是为了，如果快照中不存在的时候，能够很快的判断不存在
 				candidateConstructors = this.candidateConstructorsCache.get(beanClass);
 				if (candidateConstructors == null) {
+					// 拿到这个Bean的所有构造方法
 					Constructor<?>[] rawCandidates;
 					try {
 						rawCandidates = beanClass.getDeclaredConstructors();
@@ -285,25 +290,39 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								"Resolution of declared constructors on bean Class [" + beanClass.getName() +
 								"] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
 					}
+					// 合格的最终返回的
 					List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+					// 这个数组代表加了@Autowire注解的构造方法
 					Constructor<?> requiredConstructor = null;
+					// 代表了默认的构造方法
 					Constructor<?> defaultConstructor = null;
+					// 找到primary构造方法，意思是如果这个对象是kotlin的类，就去找他的primary的构造方法，如果是Java类直接返回空
 					Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
+					// 常规的不是合成类的构造方法的个数
 					int nonSyntheticConstructors = 0;
+					// 遍历所有的构造方法
 					for (Constructor<?> candidate : rawCandidates) {
+						// 如果是不是合成类个数+1
 						if (!candidate.isSynthetic()) {
 							nonSyntheticConstructors++;
 						}
+						// 如果是kotlin的primary构造方法退出本次循环
 						else if (primaryConstructor != null) {
 							continue;
 						}
+						// 找到当前类的@Autowire属性
 						AnnotationAttributes ann = findAutowiredAnnotation(candidate);
+						// 没有说明是手动注入未指定@Autowire
 						if (ann == null) {
+							// 找到这个类的类对象
 							Class<?> userClass = ClassUtils.getUserClass(beanClass);
+							// 如果不相等（即为内部类）
 							if (userClass != beanClass) {
 								try {
+									// 找到父类的构造方法
 									Constructor<?> superCtor =
 											userClass.getDeclaredConstructor(candidate.getParameterTypes());
+									// 再根据父类的构造方法找到@Autowire属性
 									ann = findAutowiredAnnotation(superCtor);
 								}
 								catch (NoSuchMethodException ex) {
@@ -311,35 +330,48 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								}
 							}
 						}
+						// 构造方法不为空
 						if (ann != null) {
+							// 如果存在加了@Autowire的构造方法（说明之前已经有一个加了@Autowire的构造方法了）抛出异常
 							if (requiredConstructor != null) {
 								throw new BeanCreationException(beanName,
 										"Invalid autowire-marked constructor: " + candidate +
 										". Found constructor with 'required' Autowired annotation already: " +
 										requiredConstructor);
 							}
+							// 推断构造方法@Autowire中的Required属性的值为什么
 							boolean required = determineRequiredStatus(ann);
+							// 如果为true
 							if (required) {
+								// 符合要求的构造方法不为空（抛异常）
 								if (!candidates.isEmpty()) {
 									throw new BeanCreationException(beanName,
 											"Invalid autowire-marked constructors: " + candidates +
 											". Found constructor with 'required' Autowired annotation: " +
 											candidate);
 								}
+								// 将当前构造方法加入到 加入@Autowire的构造方法中
 								requiredConstructor = candidate;
 							}
+							// 标记已经存在一个符合要求的构造方法了
 							candidates.add(candidate);
 						}
+						// 如果当前构造方法是一个无参构造方法，则把这个构造方法加入到默认构造方法中
 						else if (candidate.getParameterCount() == 0) {
 							defaultConstructor = candidate;
 						}
 					}
+					// 如果合格构造方法不为空
 					if (!candidates.isEmpty()) {
+						// 加了@Autowire注解的构造方法为空
 						// Add default constructor to list of optional constructors, as fallback.
 						if (requiredConstructor == null) {
+							// 如果默认构造方法不为空
 							if (defaultConstructor != null) {
+								// 把默认构造方法加入到合规构造方法列表中
 								candidates.add(defaultConstructor);
 							}
+							//
 							else if (candidates.size() == 1 && logger.isInfoEnabled()) {
 								logger.info("Inconsistent constructor declaration on bean with name '" + beanName +
 										"': single autowire-marked constructor flagged as optional - " +
@@ -347,11 +379,14 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 										"default constructor to fall back to: " + candidates.get(0));
 							}
 						}
+						// 如果加了@Autowire的构造方法不为空，则加入到快照中
 						candidateConstructors = candidates.toArray(new Constructor<?>[0]);
 					}
+					// 这种情况说明有且仅有一个参数个数大于0的有参构造方法
 					else if (rawCandidates.length == 1 && rawCandidates[0].getParameterCount() > 0) {
 						candidateConstructors = new Constructor<?>[] {rawCandidates[0]};
 					}
+					//
 					else if (nonSyntheticConstructors == 2 && primaryConstructor != null &&
 							defaultConstructor != null && !primaryConstructor.equals(defaultConstructor)) {
 						candidateConstructors = new Constructor<?>[] {primaryConstructor, defaultConstructor};
@@ -360,6 +395,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						candidateConstructors = new Constructor<?>[] {primaryConstructor};
 					}
 					else {
+						// 都不成立即创建一个空的构造方法数据
 						candidateConstructors = new Constructor<?>[0];
 					}
 					this.candidateConstructorsCache.put(beanClass, candidateConstructors);

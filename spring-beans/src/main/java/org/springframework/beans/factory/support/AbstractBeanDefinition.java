@@ -163,6 +163,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	@Nullable
 	private Supplier<?> instanceSupplier;
 
+	// 是否允许非public访问权限的来访问
 	private boolean nonPublicAccessAllowed = true;
 
 	private boolean lenientConstructorResolution = true;

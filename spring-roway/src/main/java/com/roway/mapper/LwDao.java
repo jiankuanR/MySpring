@@ -12,6 +12,5 @@ import com.roway.appconfig.MyScan;
  * <description>：
  * ==================================================
  */
-@MyScan
 public interface LwDao {
 }
