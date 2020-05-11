@@ -19,14 +19,14 @@ import javax.annotation.PreDestroy;
 @Component
 public class BeanService {
 
-	@Autowired(required = false)
-	public BeanService() {
-		System.out.println("default");
-	}
-
-	@Autowired(required = false)
-	public BeanService(IndexService indexService,String str) {
-		System.out.println("BeanService,str");
-	}
+//	@Autowired(required = false)
+//	public BeanService() {
+//		System.out.println("default");
+//	}
+//
+//	@Autowired(required = false)
+//	public BeanService(IndexService indexService,String str) {
+//		System.out.println("BeanService,str");
+//	}
 
 }

@@ -1,8 +1,8 @@
 package com.roway.test;
 
 import com.roway.appconfig.AppConfig;
-import com.roway.appconfig.E;
-import com.sun.istack.internal.NotNull;
+import com.roway.service.AopService1;
+import com.roway.service.IndexService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -20,6 +20,8 @@ public class Test {
 	public static void main(String[] args) {
 
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
-		System.out.println(ac.getBeanDefinition("e").getClass().getSimpleName());
+		AopService1 bean = ac.getBean(AopService1.class);
+		System.out.println(bean);
+		bean.MyAop1Method();
 	}
 }

@@ -1,6 +1,8 @@
 package com.roway.service;
 
+import com.roway.appconfig.ApplicationContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,10 +21,14 @@ import javax.annotation.PostConstruct;
 public class IndexService {
 
 	@Autowired
-	private BeanService beanService;
+	private BeanService bean;
 
-	@PostConstruct
+////	public void getBBBB() {
+//		ApplicationContextHolder.get().getBean("beanService");
+//	}
+
+	@Async
 	public void ssss () {
-
+		System.out.println("@PostConstruct");
 	}
 }
